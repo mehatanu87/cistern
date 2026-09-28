@@ -19,15 +19,15 @@ jobs:
           cache: "npm"
       - name: Install dependencies
         run: npm install
+      - name: Install Compact compiler
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf \
+            https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+          echo "$HOME/.compact/bin" >> $GITHUB_PATH
       - name: Compile Compact contract
         run: |
-          if command -v compact >/dev/null 2>&1; then
-            compact compile contracts/cistern.compact managed/cistern
-          else
-            echo "compact CLI not found on runner — skipping compile step."
-            echo "Install via: https://docs.midnight.network"
-          fi
-        continue-on-error: true
+          mkdir -p contracts/managed/cistern
+          compact compile contracts/cistern.compact contracts/managed/cistern
       - name: Lint
         run: npm run lint
       - name: Run test suite

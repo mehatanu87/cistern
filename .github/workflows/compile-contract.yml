@@ -1,0 +1,49 @@
+name: Compile Compact Contract & Generate ZK Bindings
+
+on:
+  workflow_dispatch: # Manual trigger
+  push:
+    branches: [main]
+    paths:
+      - 'contracts/cistern.compact' # Only re-compile when contract changes
+
+permissions:
+  contents: write # Required to commit generated bindings back
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Compact compiler
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf \
+            https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+          echo "$HOME/.compact/bin" >> $GITHUB_PATH
+
+      - name: Verify compact version
+        run: compact --version
+
+      - name: Compile cistern.compact to managed/cistern
+        run: |
+          mkdir -p contracts/managed/cistern
+          compact compile contracts/cistern.compact contracts/managed/cistern
+
+      - name: List generated files
+        run: find contracts/managed -type f | sort
+
+      - name: Commit generated bindings back to repo
+        run: |
+          git config user.name "mehatanu87"
+          git config user.email "mehatanu87@users.noreply.github.com"
+          git add contracts/managed/
+          if git diff --staged --quiet; then
+            echo "No changes in compiled output — nothing to commit."
+          else
+            git commit -m "chore: regenerate managed/ ZK bindings from compact compile [skip ci]"
+            git push origin main
+          fi
