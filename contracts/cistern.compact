@@ -58,7 +58,6 @@ export circuit createPool(
   currentRound = 0;
   recipientRoot = root;
   isOpen = true;
-  totalClaims = default<Counter>;
 }
 
 // Sponsor advances the vesting clock by one round. Advancing does not
