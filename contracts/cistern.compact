@@ -1,0 +1,115 @@
+// Cistern — confidential vesting, claims released over rounds
+// Midnight Builder Challenge — Level 3 (First Quarter)
+// Idea: Private Payroll / Splits (vesting variant)
+//
+// PRIVACY MODEL
+//   PUBLIC   : pool label, the total number of vesting rounds, the
+//              current round, the count of successful tranche claims,
+//              the set of spent claim nullifiers, pool open/closed.
+//   PRIVATE  : each recipient's identity, their exact share amount per
+//              round, and any link between a claim nullifier and who
+//              made it. The running total ever paid out is never
+//              summed on-chain — only a claim COUNT is public.
+//   PROVED WITHOUT REVEALING: that the caller is a recipient entitled
+//              to a share under this pool, that the round being
+//              claimed has actually vested, and that this recipient
+//              hasn't already claimed that round — without revealing
+//              the recipient's identity or their share amount.
+
+pragma language_version >= 0.16;
+
+import CompactStandardLibrary;
+
+// ---------------------------------------------------------------------
+// Ledger (PUBLIC on-chain state)
+// ---------------------------------------------------------------------
+
+export ledger poolLabel: Opaque<"string">;
+export ledger totalRounds: Uint<8>;
+export ledger currentRound: Uint<8>;
+export ledger recipientRoot: Bytes<32>;   // Merkle root of (secret, shareAmount) leaves
+export ledger usedNullifiers: Set<Bytes<32>>;
+export ledger totalClaims: Counter;        // count of successful claims, never a summed amount
+export ledger isOpen: Boolean;
+
+// ---------------------------------------------------------------------
+// Witnesses (PRIVATE — supplied locally by the recipient)
+// ---------------------------------------------------------------------
+
+witness recipientSecret(): Bytes<32>;
+witness shareAmount(): Uint<32>;
+witness recipientPath(): MerkleTreePath<10, Bytes<32>>;
+
+// ---------------------------------------------------------------------
+// Circuits
+// ---------------------------------------------------------------------
+
+// Pool sponsor opens the cistern: names it, sets the vesting horizon
+// in rounds, and publishes the Merkle root of every recipient's
+// (secret, shareAmount) commitment.
+export circuit createPool(
+  label: Opaque<"string">,
+  numRounds: Uint<8>,
+  root: Bytes<32>
+): [] {
+  assert(numRounds >= 1 && numRounds <= 12, "pool needs 1-12 rounds");
+  poolLabel = label;
+  totalRounds = numRounds;
+  currentRound = 0;
+  recipientRoot = root;
+  isOpen = true;
+  totalClaims = default<Counter>;
+}
+
+// Sponsor advances the vesting clock by one round. Advancing does not
+// disclose anything — it only unlocks the next tranche for claiming.
+export circuit advanceRound(): [] {
+  assert(isOpen, "pool is closed");
+  assert(currentRound < totalRounds, "already at the final round");
+  currentRound = currentRound + 1;
+}
+
+// A recipient proves, in zero-knowledge:
+//   1) they know (secret, shareAmount) such that hash(secret,
+//      shareAmount) is a leaf of recipientRoot — i.e. they were
+//      genuinely allocated a share by the sponsor
+//   2) the round they're claiming has already vested (roundIndex <=
+//      currentRound)
+//   3) the nullifier derived from secret + poolLabel + roundIndex
+//      hasn't been used — one claim per recipient per round
+// Only the aggregate `totalClaims` count changes on-chain. The share
+// amount, and which recipient claimed, are never disclosed.
+export circuit claimTranche(roundIndex: Uint<8>): [] {
+  assert(isOpen, "pool is closed");
+  assert(roundIndex >= 1 && roundIndex <= totalRounds, "no such round");
+  assert(roundIndex <= currentRound, "this round has not vested yet");
+
+  const secret = recipientSecret();
+  const amount = shareAmount();
+  const path = recipientPath();
+
+  const leaf = persistentHash<Vector<2, Bytes<32>>>(
+    [secret, persistentHash<Uint<32>>(amount)]
+  );
+  const computedRoot = merkleTreePathRoot<10, Bytes<32>>(path, leaf);
+  assert(computedRoot == recipientRoot, "not an allocated recipient");
+
+  const nullifier = persistentHash<Vector<3, Bytes<32>>>(
+    [
+      secret,
+      persistentHash<Opaque<"string">>(poolLabel),
+      persistentHash<Uint<8>>(roundIndex)
+    ]
+  );
+  assert(!usedNullifiers.member(nullifier), "this round has already been claimed");
+  usedNullifiers.insert(nullifier);
+
+  totalClaims.increment(1);
+}
+
+// Sponsor closes the pool. Past claims remain valid; no further
+// rounds advance or claims are accepted.
+export circuit closePool(): [] {
+  assert(isOpen, "already closed");
+  isOpen = false;
+}
