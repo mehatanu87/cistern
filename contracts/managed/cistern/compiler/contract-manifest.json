@@ -1,0 +1,98 @@
+{
+  "manifest-version": "1",
+  "compiler-version": "0.34.0",
+  "language-version": "0.26.0",
+  "runtime-version": "0.19.0",
+  "compiler": {
+    "type": "directory",
+    "contract-info.json": {
+      "type": "file",
+      "size": 3807,
+      "hash": "22c0ba586d26d235dfdee6c5da65c198be65804fee4f9845b8194247aa2b3a01"
+    }
+  },
+  "contract": {
+    "type": "directory",
+    "index.d.ts": {
+      "type": "file",
+      "size": 3282,
+      "hash": "58a20d30acfe0a70500957bc477bd92c3e366d3b1e04644fe799852e7b8f3012"
+    },
+    "index.js": {
+      "type": "file",
+      "size": 67123,
+      "hash": "e3f0fd44f7755e565dd3baab90704bc79f9ec63ae91232b548dc66f74a81e61c"
+    },
+    "index.js.map": {
+      "type": "file",
+      "size": 2574,
+      "hash": "04d8ff2fbee730da9fcb05c26b4dcda051e2c0a8b752f1f986547086b1f283d7"
+    }
+  },
+  "zkir": {
+    "type": "directory",
+    "advanceRound.bzkir": {
+      "type": "file",
+      "size": 223,
+      "hash": "9d49bd5aaf06e22e48a1fb7fc0f3dfff19ea4340f5015a386928a3997ba8b3e6"
+    },
+    "advanceRound.zkir": {
+      "type": "file",
+      "size": 3729,
+      "hash": "30971ed32fc2cb7acd4f63b1604e54c1122b1f5e7cdc44740e32279fa5192797"
+    },
+    "claimTranche.bzkir": {
+      "type": "file",
+      "size": 742,
+      "hash": "61b21d34c0e5a20b9c3e6b6eb124c145f17ffdea1dc843faaee1378163552fb4"
+    },
+    "claimTranche.zkir": {
+      "type": "file",
+      "size": 11564,
+      "hash": "77d75dca643e0f14c5d9f1b7ed2b808cc2bf94b8a6f5c8c759a259859647a287"
+    },
+    "closePool.bzkir": {
+      "type": "file",
+      "size": 114,
+      "hash": "729624177aa26673e38d4ca4c052ae571ec1a874c8d5f1caed38507be5ff4c42"
+    },
+    "closePool.zkir": {
+      "type": "file",
+      "size": 1752,
+      "hash": "c0e61674d345c8ce63b657565502bd64df35429c5a0744ba699c440be9ed20d8"
+    }
+  },
+  "keys": {
+    "type": "directory",
+    "advanceRound.prover": {
+      "type": "file",
+      "size": 146826,
+      "hash": "65371605123f7e6e7db09a308b30dbb55cad7a6c1dc2be9b7f44681057cbf791"
+    },
+    "advanceRound.verifier": {
+      "type": "file",
+      "size": 1351,
+      "hash": "add16af1fd2e78234b8305c1a4697efcc0872f66e70433dddc1cecb2f36be073"
+    },
+    "claimTranche.prover": {
+      "type": "file",
+      "size": 5232349,
+      "hash": "5b320375477ff10360f950fd13d890c7d37b817892e65553d2a25a48bd33814a"
+    },
+    "claimTranche.verifier": {
+      "type": "file",
+      "size": 2119,
+      "hash": "12291f76810236d269114b28bcd18b0ddff066f0e223d25ec66dd7838366fb21"
+    },
+    "closePool.prover": {
+      "type": "file",
+      "size": 22539,
+      "hash": "f1acb72da01f61c57a88509b52dde04674b425cf37fd0ce843c34bb217b81287"
+    },
+    "closePool.verifier": {
+      "type": "file",
+      "size": 1351,
+      "hash": "3402fdf8e136b7e914ee986924ac3fcf7269320b591b54c24c0332eb2c2a7385"
+    }
+  }
+}
