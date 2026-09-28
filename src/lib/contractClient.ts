@@ -14,8 +14,10 @@ import {
 } from "@midnight-ntwrk/midnight-js-contracts";
 import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-public-data-provider";
 import { FetchZkConfigProvider } from "@midnight-ntwrk/midnight-js-fetch-zk-config-provider";
+import { httpClientProofProvider } from "@midnight-ntwrk/midnight-js-http-client-proof-provider";
 import { setNetworkId } from "@midnight-ntwrk/midnight-js-network-id";
 import { fromHex, toHex } from "@midnight-ntwrk/midnight-js-protocol/compact-runtime";
+import { inMemoryPrivateStateProvider } from "./inMemoryPrivateStateProvider";
 import {
   Binding,
   FinalizedTransaction,
@@ -99,6 +101,10 @@ async function buildProviders(walletApi: WalletApi, config: Awaited<ReturnType<W
     fetch.bind(window),
   );
 
+  const proofProvider = httpClientProofProvider(config.proverServerUri || "http://127.0.0.1:6300", zkConfigProvider);
+  
+  const privateStateProvider = inMemoryPrivateStateProvider<string, CisternPrivateState>();
+
   const shieldedAddresses = await walletApi.getShieldedAddresses();
 
   const walletProvider = {
@@ -120,7 +126,7 @@ async function buildProviders(walletApi: WalletApi, config: Awaited<ReturnType<W
     },
   };
 
-  return { publicDataProvider, zkConfigProvider, walletProvider, midnightProvider };
+  return { publicDataProvider, zkConfigProvider, walletProvider, midnightProvider, proofProvider, privateStateProvider };
 }
 
 // -----------------------------------------------------------------------
@@ -178,7 +184,8 @@ export async function submitClaimTranche(params: ClaimTrancheParams): Promise<Tx
       compiledContract,
       circuitId: "claimTranche",
       contractAddress: deployedContract.address as any,
-      // Removed privateStateId and initialPrivateState since witnesses capture it directly
+      privateStateId: "cistern",
+      initialPrivateState,
       args: [BigInt(params.roundIndex)] as any,
     } as any);
 
