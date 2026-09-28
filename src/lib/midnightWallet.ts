@@ -12,8 +12,15 @@ export interface InjectedWallet {
 
 export interface WalletApi {
   getUnshieldedAddress: () => Promise<{ unshieldedAddress: string }>;
-  getConfiguration: () => Promise<{ nodeUri?: string; indexerUri: string; proverServerUri?: string; substrateNodeUri?: string }>;
-  makeTransfer: (desiredOutputs: Array<{ kind: 'shielded' | 'unshielded'; type: string; value: bigint; recipient: string }>, options?: { payFees?: boolean }) => Promise<{ tx: string }>;
+  getConfiguration: () => Promise<{
+    nodeUri?: string;
+    indexerUri: string;
+    indexerWsUri: string;
+    proverServerUri?: string;
+    substrateNodeUri?: string;
+    networkId: string;
+  }>;
+  balanceUnsealedTransaction: (tx: string, options?: { payFees?: boolean }) => Promise<{ tx: string }>;
   submitTransaction: (tx: string) => Promise<void>;
 }
 
