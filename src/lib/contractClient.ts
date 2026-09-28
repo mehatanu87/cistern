@@ -88,7 +88,7 @@ function makeWitnesses(_state: CisternPrivateState): Witnesses<CisternPrivateSta
 // Wallet provider adapters (DApp Connector → Midnight.js providers)
 // -----------------------------------------------------------------------
 
-function buildProviders(walletApi: WalletApi, config: Awaited<ReturnType<WalletApi["getConfiguration"]>>) {
+async function buildProviders(walletApi: WalletApi, config: Awaited<ReturnType<WalletApi["getConfiguration"]>>) {
   const publicDataProvider = indexerPublicDataProvider(
     config.indexerUri,
     config.indexerWsUri,
@@ -99,9 +99,11 @@ function buildProviders(walletApi: WalletApi, config: Awaited<ReturnType<WalletA
     fetch.bind(window),
   );
 
+  const shieldedAddresses = await walletApi.getShieldedAddresses();
+
   const walletProvider = {
-    getCoinPublicKey(): string { return ""; },
-    getEncryptionPublicKey(): string { return ""; },
+    getCoinPublicKey(): string { return shieldedAddresses.shieldedCoinPublicKey; },
+    getEncryptionPublicKey(): string { return shieldedAddresses.shieldedEncryptionPublicKey; },
     balanceTx: async (tx: UnboundTransaction): Promise<FinalizedTransaction> => {
       const balanced = await walletApi.balanceUnsealedTransaction(toHex(tx.serialize()));
       return Transaction.deserialize<SignatureEnabled, Proof, Binding>(
@@ -146,7 +148,7 @@ export async function submitClaimTranche(params: ClaimTrancheParams): Promise<Tx
   setNetworkId(deployedContract.network);
 
   const config = await params.wallet.getConfiguration();
-  const providers = buildProviders(params.wallet, config);
+  const providers = await buildProviders(params.wallet, config);
 
   // Decode hex secret into bytes
   const secretHex = params.recipientSecret.replace(/^0x/, "");

@@ -12,6 +12,7 @@ export interface InjectedWallet {
 
 export interface WalletApi {
   getUnshieldedAddress: () => Promise<{ unshieldedAddress: string }>;
+  getShieldedAddresses: () => Promise<{ shieldedCoinPublicKey: string, shieldedEncryptionPublicKey: string }>;
   getConfiguration: () => Promise<{
     nodeUri?: string;
     indexerUri: string;
