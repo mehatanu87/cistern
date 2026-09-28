@@ -155,12 +155,14 @@ export async function submitClaimTranche(params: ClaimTrancheParams): Promise<Tx
     amount: BigInt(params.shareAmount),
   };
 
-  // Instantiate contract with witnesses bound to the private state
-  const contractInstance = new Contract(makeWitnesses(initialPrivateState));
-  void contractInstance; // used for side-effect: witness registration
+  class BoundContract extends Contract<CisternPrivateState> {
+    constructor() {
+      super(makeWitnesses(initialPrivateState));
+    }
+  }
 
   // Build compiled contract with ZK file assets
-  const compiledContract = CompiledContract.make("cistern", Contract as any)
+  const compiledContract = CompiledContract.make("cistern", BoundContract as any)
     .pipe(CompiledContract.withCompiledFileAssets(contractReferenceLocations)) as any;
 
   // Build the unproven claimTranche call transaction
