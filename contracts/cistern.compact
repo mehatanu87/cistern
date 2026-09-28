@@ -65,7 +65,7 @@ export circuit createPool(
 export circuit advanceRound(): [] {
   assert(isOpen, "pool is closed");
   assert(currentRound < totalRounds, "already at the final round");
-  currentRound = currentRound + 1;
+  currentRound = (currentRound + 1) as Uint<8>;
 }
 
 // A recipient proves, in zero-knowledge:
