@@ -1,6 +1,8 @@
 import { Header } from "./components/Header";
 import { DeploymentBanner } from "./components/DeploymentBanner";
 import { ClaimBasin } from "./components/ClaimBasin";
+import { HowItWorks } from "./components/HowItWorks";
+import { PrivacyRadar } from "./components/PrivacyRadar";
 import { useMidnightWallet } from "./hooks/useMidnightWallet";
 import { getDeployment } from "./lib/contractClient";
 
@@ -23,6 +25,8 @@ function App() {
         <section className="mb-10">
           <ClaimBasin walletApi={wallet.walletApi} walletConnected={wallet.status === "connected"} />
         </section>
+        <HowItWorks />
+        <PrivacyRadar />
       </main>
       <footer className="border-t border-sand/10">
         <div className="mx-auto max-w-3xl px-6 py-6 flex flex-col sm:flex-row justify-between gap-2">
