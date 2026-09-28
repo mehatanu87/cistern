@@ -53,10 +53,10 @@ export circuit createPool(
   root: Bytes<32>
 ): [] {
   assert(numRounds >= 1 && numRounds <= 12, "pool needs 1-12 rounds");
-  poolLabel = label;
-  totalRounds = numRounds;
+  poolLabel = disclose(label);
+  totalRounds = disclose(numRounds);
   currentRound = 0;
-  recipientRoot = root;
+  recipientRoot = disclose(root);
   isOpen = true;
 }
 
@@ -80,8 +80,8 @@ export circuit advanceRound(): [] {
 // amount, and which recipient claimed, are never disclosed.
 export circuit claimTranche(roundIndex: Uint<8>): [] {
   assert(isOpen, "pool is closed");
-  assert(roundIndex >= 1 && roundIndex <= totalRounds, "no such round");
-  assert(roundIndex <= currentRound, "this round has not vested yet");
+  assert(disclose(roundIndex) >= 1 && disclose(roundIndex) <= totalRounds, "no such round");
+  assert(disclose(roundIndex) <= currentRound, "this round has not vested yet");
 
   const secret = recipientSecret();
   const amount = shareAmount();
@@ -100,8 +100,8 @@ export circuit claimTranche(roundIndex: Uint<8>): [] {
       persistentHash<Uint<8>>(roundIndex)
     ]
   );
-  assert(!usedNullifiers.member(nullifier), "this round has already been claimed");
-  usedNullifiers.insert(nullifier);
+  assert(!usedNullifiers.member(disclose(nullifier)), "this round has already been claimed");
+  usedNullifiers.insert(disclose(nullifier));
 
   totalClaims.increment(1);
 }
