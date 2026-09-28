@@ -24,11 +24,22 @@ declare global {
 
 export type WalletStatus = "disconnected" | "connecting" | "connected" | "unavailable" | "error";
 
+/** Poll window.midnight until at least one valid wallet appears, or timeout. */
+async function pollForWallets(timeoutMs = 3000, intervalMs = 150): Promise<Array<{ id: string; wallet: InjectedWallet }>> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const found = listInjectedWallets();
+    if (found.length > 0) return found;
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  return [];
+}
+
 export function listInjectedWallets(): Array<{ id: string; wallet: InjectedWallet }> {
   if (typeof window === "undefined" || !window.midnight) return [];
   return Object.entries(window.midnight)
-    .filter(([, w]) => w && typeof w.enable === "function")
-    .map(([id, wallet]) => ({ id, wallet }));
+    .filter(([, w]) => w && typeof w === "object" && typeof (w as InjectedWallet).enable === "function")
+    .map(([id, wallet]) => ({ id, wallet: wallet as InjectedWallet }));
 }
 
 export async function connectWallet(walletId?: string): Promise<{
@@ -37,13 +48,12 @@ export async function connectWallet(walletId?: string): Promise<{
   api: WalletApi;
   serviceUriConfig?: { nodeUri: string; indexerUri: string; proverServerUri: string };
 }> {
-  // Give the wallet extension a moment to inject itself
-  await new Promise((r) => setTimeout(r, 300));
+  // Poll for up to 3 seconds — extensions inject asynchronously after page load
+  const wallets = await pollForWallets(3000);
 
-  const wallets = listInjectedWallets();
   if (wallets.length === 0) {
     throw new Error(
-      "No Midnight-compatible wallet detected. Install Lace or 1AM Wallet, configure it for Preprod, and reload the page."
+      "No Midnight-compatible wallet detected. Install the 1AM Wallet or Lace extension, make sure it is configured for the Preprod network, then reload the page."
     );
   }
 
@@ -53,11 +63,11 @@ export async function connectWallet(walletId?: string): Promise<{
 
   if (!target) throw new Error("The requested wallet is not installed.");
 
-  // enable() returns the WalletApi
+  // enable() prompts the user and returns the WalletApi
   const api = await target.wallet.enable();
   if (!api || typeof api.state !== "function") {
     throw new Error(
-      `Wallet "${target.wallet.name}" did not return a valid API. Make sure it is unlocked and on Preprod.`
+      `Wallet "${target.wallet.name}" did not return a valid API. Make sure it is unlocked and set to Preprod.`
     );
   }
 
