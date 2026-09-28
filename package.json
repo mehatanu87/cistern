@@ -14,6 +14,8 @@
     "compact:compile": "compact compile contracts/cistern.compact managed/cistern"
   },
   "dependencies": {
+    "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
+    "@midnight-ntwrk/wallet-api": "^5.0.0",
     "bip39": "^3.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
