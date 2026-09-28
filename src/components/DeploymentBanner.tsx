@@ -1,12 +1,21 @@
 import { DeploymentInfo } from "../lib/contractClient";
 
+const EXPLORER_BASE = "https://preprod.midnight.network/contract/";
+
 export function DeploymentBanner({ deployment }: { deployment: DeploymentInfo }) {
   if (deployment.address) {
     return (
       <div className="border border-stone/30 bg-stone/5 rounded-sm px-4 py-3 text-sm text-sand/80 flex flex-wrap items-center gap-2 mb-8">
-        <span className="text-stone-light">●</span>
-        <span>Live on {deployment.network} at{" "}
-          <span className="font-mono text-xs text-sand/70">{deployment.address.slice(0, 10)}…{deployment.address.slice(-8)}</span>
+        <span className="text-green-400">●</span>
+        <span>Live on <strong>{deployment.network}</strong> —{" "}
+          <a
+            href={`${EXPLORER_BASE}${deployment.address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-xs text-sand/70 underline hover:text-sand"
+          >
+            {deployment.address.slice(0, 12)}…{deployment.address.slice(-8)}
+          </a>
         </span>
       </div>
     );

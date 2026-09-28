@@ -1,6 +1,7 @@
 {
   "network": "preprod",
-  "address": null,
-  "deployedAt": null,
-  "note": "Populate this after running `compact compile` and deploying cistern.compact to Preprod. The app refuses to simulate transactions when this is null."
+  "address": "bde9e76ccc9fdf2662d1872b8d6b7916a98b04f19ee0194bc18f3d4779dd47b0",
+  "contractAddress": "bde9e76ccc9fdf2662d1872b8d6b7916a98b04f19ee0194bc18f3d4779dd47b0",
+  "explorerUrl": "https://preprod.midnight.network/contract/bde9e76ccc9fdf2662d1872b8d6b7916a98b04f19ee0194bc18f3d4779dd47b0",
+  "deployedAt": "2026-09-28T13:57:00.000Z"
 }

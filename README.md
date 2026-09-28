@@ -1,14 +1,14 @@
 # Cistern
-![CI](https://github.com/YOUR_USERNAME/cistern/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/mehatanu87/cistern/actions/workflows/ci.yml/badge.svg)
 > Confidential vesting — claims released over rounds. Built on Midnight.
 
 ## Live Demo
-[LIVE URL — add after deploying, e.g. Vercel/Netlify]
+[https://cistern.vercel.app](https://cistern.vercel.app)
 
 ## Contract Address
-| Network  | Address                          |
-|----------|-----------------------------------|
-| Preprod  | `[CONTRACT ADDRESS — REQUIRED]`    |
+| Network  | Address                                                            |
+|----------|--------------------------------------------------------------------|
+| Preprod  | [`bde9e76ccc9fdf2662d1872b8d6b7916a98b04f19ee0194bc18f3d4779dd47b0`](https://preprod.midnight.network/contract/bde9e76ccc9fdf2662d1872b8d6b7916a98b04f19ee0194bc18f3d4779dd47b0) |
 
 ## What This Does
 Cistern distributes a pool of funds to allocated recipients across a
