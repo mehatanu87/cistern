@@ -10,11 +10,6 @@ export function useMidnightWallet() {
 
   const connect = useCallback(async () => {
     setError(null);
-    if (listInjectedWallets().length === 0) {
-      setStatus("unavailable");
-      setError("No Midnight wallet detected. Install Lace or 1AM Wallet for Preprod.");
-      return;
-    }
     try {
       setStatus("connecting");
       const { address, walletName, api } = await connectWallet();
