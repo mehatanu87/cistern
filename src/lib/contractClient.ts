@@ -156,6 +156,8 @@ export async function submitClaimTranche(params: ClaimTrancheParams): Promise<Tx
   const config = await params.wallet.getConfiguration();
   const providers = await buildProviders(params.wallet, config);
 
+  providers.privateStateProvider.setContractAddress(deployedContract.address as any);
+
   // Decode hex secret into bytes
   const secretHex = params.recipientSecret.replace(/^0x/, "");
   const secretBytes = new Uint8Array(
