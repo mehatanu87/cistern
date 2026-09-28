@@ -17,9 +17,5 @@ export default defineConfig({
   },
   build: {
     target: "esnext",
-    rollupOptions: {
-      // Treat WASM files as external assets so Rollup doesn't try to inline them
-      external: (id) => id.endsWith(".wasm"),
-    },
   },
 });
