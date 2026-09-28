@@ -23,9 +23,11 @@ jobs:
         run: |
           curl --proto '=https' --tlsv1.2 -LsSf \
             https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
-          # Add to PATH for this step's remaining commands
-          export PATH="$HOME/.compact/bin:$PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           compact --version
+          # Download and set the actual compactc compiler binary
+          compact update
+          compact list --installed
           mkdir -p contracts/managed/cistern
           compact compile contracts/cistern.compact contracts/managed/cistern
       - name: Lint

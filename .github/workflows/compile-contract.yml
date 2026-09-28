@@ -5,10 +5,10 @@ on:
   push:
     branches: [main]
     paths:
-      - 'contracts/cistern.compact' # Only re-compile when contract changes
+      - 'contracts/cistern.compact'
 
 permissions:
-  contents: write # Required to commit generated bindings back
+  contents: write
 
 jobs:
   compile:
@@ -23,8 +23,11 @@ jobs:
         run: |
           curl --proto '=https' --tlsv1.2 -LsSf \
             https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
-          export PATH="$HOME/.compact/bin:$PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           compact --version
+          # Download and set the actual compactc compiler binary
+          compact update
+          compact list --installed
           mkdir -p contracts/managed/cistern
           compact compile contracts/cistern.compact contracts/managed/cistern
 
