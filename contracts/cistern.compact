@@ -44,14 +44,11 @@ witness recipientPath(): MerkleTreePath<10, Bytes<32>>;
 // Circuits
 // ---------------------------------------------------------------------
 
-// Pool sponsor opens the cistern: names it, sets the vesting horizon
-// in rounds, and publishes the Merkle root of every recipient's
-// (secret, shareAmount) commitment.
-export circuit createPool(
+constructor(
   label: Opaque<"string">,
   numRounds: Uint<8>,
   root: Bytes<32>
-): [] {
+) {
   assert(numRounds >= 1 && numRounds <= 12, "pool needs 1-12 rounds");
   poolLabel = disclose(label);
   totalRounds = disclose(numRounds);
