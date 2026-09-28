@@ -27,7 +27,9 @@ export function ClaimBasin({
     setPhase("proving");
     setErrorMsg(null);
     try {
-      await submitClaimTranche({ wallet: walletApi, recipientSecret: secret, shareAmount, roundIndex });
+      const res = await submitClaimTranche({ wallet: walletApi, recipientSecret: secret, shareAmount, roundIndex });
+      setPhase("ready");
+      setErrorMsg(`Success! Transaction ID: ${res.txHash} (view on explorer)`);
     } catch (e) {
       setErrorMsg(e instanceof Error ? e.message : "The claim could not be submitted.");
       setPhase("error");
