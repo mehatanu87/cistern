@@ -94,6 +94,7 @@ async function buildProviders(walletApi: WalletApi, config: Awaited<ReturnType<W
   const publicDataProvider = indexerPublicDataProvider(
     config.indexerUri,
     config.indexerWsUri,
+    globalThis.WebSocket as any
   );
 
   const zkConfigProvider = new FetchZkConfigProvider(
