@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { connectWallet, listInjectedWallets, WalletApi, WalletStatus } from "../lib/midnightWallet";
+import { connectWallet, WalletApi, WalletStatus } from "../lib/midnightWallet";
 
 export function useMidnightWallet() {
   const [status, setStatus] = useState<WalletStatus>("disconnected");
