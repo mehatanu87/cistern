@@ -14,6 +14,7 @@ import {
 } from "@midnight-ntwrk/midnight-js-contracts";
 import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-public-data-provider";
 import { FetchZkConfigProvider } from "@midnight-ntwrk/midnight-js-fetch-zk-config-provider";
+import { setNetworkId } from "@midnight-ntwrk/midnight-js-network-id";
 import { fromHex, toHex } from "@midnight-ntwrk/midnight-js-protocol/compact-runtime";
 import {
   Binding,
@@ -140,6 +141,9 @@ export async function submitClaimTranche(params: ClaimTrancheParams): Promise<Tx
   if (!isDeployed()) {
     throw new Error("No contract deployed — fill in deployed_contract.json.");
   }
+
+  // Set the correct network ID for the Midnight SDK (e.g. "preprod")
+  setNetworkId(deployedContract.network);
 
   const config = await params.wallet.getConfiguration();
   const providers = buildProviders(params.wallet, config);
