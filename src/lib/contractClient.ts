@@ -179,6 +179,9 @@ export async function submitClaimTranche(params: ClaimTrancheParams): Promise<Tx
   const compiledContract = CompiledContract.make("cistern", BoundContract as any)
     .pipe(CompiledContract.withCompiledFileAssets(contractReferenceLocations)) as any;
 
+  // The SDK expects the private state to already exist in the provider under the ID we specify
+  await providers.privateStateProvider.set("cistern", initialPrivateState);
+
   try {
     console.log("[ClaimTranche] Starting unproven call tx creation...");
     // Build the unproven claimTranche call transaction
@@ -187,7 +190,6 @@ export async function submitClaimTranche(params: ClaimTrancheParams): Promise<Tx
       circuitId: "claimTranche",
       contractAddress: deployedContract.address as any,
       privateStateId: "cistern",
-      initialPrivateState,
       args: [BigInt(params.roundIndex)] as any,
     } as any);
 
