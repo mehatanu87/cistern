@@ -92,7 +92,7 @@ export circuit claimTranche(roundIndex: Uint<8>): [] {
   );
   assert(path.leaf == leaf, "path leaf does not match provided secret and amount");
   const computedRoot = merkleTreePathRoot<10, Bytes<32>>(path);
-  assert(computedRoot == recipientRoot, "not an allocated recipient");
+  assert(computedRoot.field as Bytes<32> == recipientRoot, "not an allocated recipient");
 
   const nullifier = persistentHash<Vector<3, Bytes<32>>>(
     [
