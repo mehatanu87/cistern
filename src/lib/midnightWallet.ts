@@ -37,8 +37,12 @@ async function pollForWallets(timeoutMs = 3000, intervalMs = 150): Promise<Array
 
 export function listInjectedWallets(): Array<{ id: string; wallet: InjectedWallet }> {
   if (typeof window === "undefined" || !window.midnight) return [];
-  return Object.entries(window.midnight)
-    .filter(([, w]) => w && typeof w === "object" && typeof (w as InjectedWallet).enable === "function")
+  
+  const entries = Object.entries(window.midnight);
+  console.log("[Midnight] Found window.midnight entries:", entries);
+  
+  return entries
+    .filter(([, w]) => w && typeof w === "object")
     .map(([id, wallet]) => ({ id, wallet: wallet as InjectedWallet }));
 }
 
