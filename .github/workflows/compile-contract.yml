@@ -19,17 +19,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Compact compiler
+      - name: Install Compact compiler and compile contract
         run: |
           curl --proto '=https' --tlsv1.2 -LsSf \
             https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
-          echo "$HOME/.compact/bin" >> $GITHUB_PATH
-
-      - name: Verify compact version
-        run: compact --version
-
-      - name: Compile cistern.compact to managed/cistern
-        run: |
+          export PATH="$HOME/.compact/bin:$PATH"
+          compact --version
           mkdir -p contracts/managed/cistern
           compact compile contracts/cistern.compact contracts/managed/cistern
 
