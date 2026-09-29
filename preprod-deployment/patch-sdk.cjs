@@ -18,16 +18,21 @@ function patchFile(filePath) {
     // For CJS
     const searchStringCjs = `midnightJsTypes.exitResultOrError(exitResult)`;
     const replacementStringCjs = `(function(er) {
-        if (er && er._tag === 'Success' && er.value && er.value.private) {
-            if (er.value.private.signingKey && typeof er.value.private.signingKey === 'object') {
-                er.value.private.signingKey = er.value.private.signingKey.value;
-            }
-            if (er.value.private.privateState && er.value.private.privateState.keys) {
-                const keys = er.value.private.privateState.keys;
-                if (typeof keys.signing === 'object' && keys.signing) keys.signing = keys.signing.value;
-                if (typeof keys.encryption === 'object' && keys.encryption) keys.encryption = keys.encryption.value;
+        function flatten(obj, depth = 0) {
+            if (depth > 5 || !obj || typeof obj !== 'object') return;
+            if (obj.tag === 'schnorr' && obj.value) { obj.tag = undefined; return obj.value; }
+            if (obj.tag === 'ed25519' && obj.value) { obj.tag = undefined; return obj.value; }
+            for (let k in obj) {
+                if (obj.hasOwnProperty(k)) {
+                    if (obj[k] && typeof obj[k] === 'object') {
+                        if (obj[k].tag === 'schnorr' && obj[k].value) obj[k] = obj[k].value;
+                        else if (obj[k].tag === 'ed25519' && obj[k].value) obj[k] = obj[k].value;
+                        else flatten(obj[k], depth + 1);
+                    }
+                }
             }
         }
+        flatten(er);
         return midnightJsTypes.exitResultOrError(er);
     })(exitResult)`;
 
@@ -39,16 +44,21 @@ function patchFile(filePath) {
     // For MJS
     const searchStringMjs = `exitResultOrError(exitResult)`;
     const replacementStringMjs = `(function(er) {
-        if (er && er._tag === 'Success' && er.value && er.value.private) {
-            if (er.value.private.signingKey && typeof er.value.private.signingKey === 'object') {
-                er.value.private.signingKey = er.value.private.signingKey.value;
-            }
-            if (er.value.private.privateState && er.value.private.privateState.keys) {
-                const keys = er.value.private.privateState.keys;
-                if (typeof keys.signing === 'object' && keys.signing) keys.signing = keys.signing.value;
-                if (typeof keys.encryption === 'object' && keys.encryption) keys.encryption = keys.encryption.value;
+        function flatten(obj, depth = 0) {
+            if (depth > 5 || !obj || typeof obj !== 'object') return;
+            if (obj.tag === 'schnorr' && obj.value) { obj.tag = undefined; return obj.value; }
+            if (obj.tag === 'ed25519' && obj.value) { obj.tag = undefined; return obj.value; }
+            for (let k in obj) {
+                if (obj.hasOwnProperty(k)) {
+                    if (obj[k] && typeof obj[k] === 'object') {
+                        if (obj[k].tag === 'schnorr' && obj[k].value) obj[k] = obj[k].value;
+                        else if (obj[k].tag === 'ed25519' && obj[k].value) obj[k] = obj[k].value;
+                        else flatten(obj[k], depth + 1);
+                    }
+                }
             }
         }
+        flatten(er);
         return exitResultOrError(er);
     })(exitResult)`;
 
