@@ -29,16 +29,14 @@ jobs:
         run: |
           cp contracts/cistern.compact preprod-deployment/contracts/src/cistern.compact
 
-      - name: Compile Contract
+      - name: Copy Compiled Contract Bindings
         run: |
-          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
-          export PATH="$HOME/.local/bin:$PATH"
-          compact update 0.31.1 || compact update 0.31.0
-          compact --version
-          cd preprod-deployment/contracts
-          compact compile src/cistern.compact ./src/managed/cistern
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          mkdir -p preprod-deployment/contracts/src/managed
+          cp -r contracts/managed/cistern preprod-deployment/contracts/src/managed/cistern
+          
+          # Fix dependencies in the deployment project to match the root project
+          cd preprod-deployment
+          npm install @midnight-ntwrk/compact-runtime@0.19.0
           
       - name: Build Contract Bindings
         run: |
