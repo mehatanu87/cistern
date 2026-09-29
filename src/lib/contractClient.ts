@@ -99,7 +99,7 @@ async function buildProviders(walletApi: WalletApi, config: Awaited<ReturnType<W
 
   const zkConfigProvider = new FetchZkConfigProvider(
     window.location.origin,
-    { fetchFunc: fetch.bind(window) },
+    fetch.bind(window)
   );
 
   const proofProvider = httpClientProofProvider(config.proverServerUri || "http://127.0.0.1:6300", zkConfigProvider);

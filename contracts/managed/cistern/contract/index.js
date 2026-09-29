@@ -154,7 +154,7 @@ export class Contract {
           throw new __compactRuntime.CompactError(`advanceRound: expected 1 argument (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
-        if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.callContext.currentQueryContext != undefined)) {
+        if (!(typeof(contextOrig_0) === 'object' && (contextOrig_0.callContext || contextOrig_0).currentQueryContext != undefined)) {
           __compactRuntime.typeError('advanceRound',
                                      'argument 1 (as invoked from Typescript)',
                                      'cistern.compact line 62 char 1',
@@ -171,7 +171,7 @@ export class Contract {
         const result_0 = await this._advanceRound_0(context, partialProofData);
         partialProofData.output = { value: [], alignment: [] };
         __compactRuntime.finalizeCallProofData(context, partialProofData);
-        return { result: result_0, context: context, gasCost: context.callContext.currentGasCost };
+        return { result: result_0, context: context, gasCost: (context.callContext || context).currentGasCost };
       },
       claimTranche: async (...args_1) => {
         if (args_1.length !== 2) {
@@ -179,7 +179,7 @@ export class Contract {
         }
         const contextOrig_0 = args_1[0];
         const roundIndex_0 = args_1[1];
-        if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.callContext.currentQueryContext != undefined)) {
+        if (!(typeof(contextOrig_0) === 'object' && (contextOrig_0.callContext || contextOrig_0).currentQueryContext != undefined)) {
           __compactRuntime.typeError('claimTranche',
                                      'argument 1 (as invoked from Typescript)',
                                      'cistern.compact line 78 char 1',
@@ -208,14 +208,14 @@ export class Contract {
                                                     roundIndex_0);
         partialProofData.output = { value: [], alignment: [] };
         __compactRuntime.finalizeCallProofData(context, partialProofData);
-        return { result: result_0, context: context, gasCost: context.callContext.currentGasCost };
+        return { result: result_0, context: context, gasCost: (context.callContext || context).currentGasCost };
       },
       closePool: async (...args_1) => {
         if (args_1.length !== 1) {
           throw new __compactRuntime.CompactError(`closePool: expected 1 argument (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
-        if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.callContext.currentQueryContext != undefined)) {
+        if (!(typeof(contextOrig_0) === 'object' && (contextOrig_0.callContext || contextOrig_0).currentQueryContext != undefined)) {
           __compactRuntime.typeError('closePool',
                                      'argument 1 (as invoked from Typescript)',
                                      'cistern.compact line 108 char 1',
@@ -232,7 +232,7 @@ export class Contract {
         const result_0 = await this._closePool_0(context, partialProofData);
         partialProofData.output = { value: [], alignment: [] };
         __compactRuntime.finalizeCallProofData(context, partialProofData);
-        return { result: result_0, context: context, gasCost: context.callContext.currentGasCost };
+        return { result: result_0, context: context, gasCost: (context.callContext || context).currentGasCost };
       }
     };
     this.impureCircuits = {
@@ -431,11 +431,11 @@ export class Contract {
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_1.toValue(true),
                                                                                               alignment: _descriptor_1.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } }]);
-    state_0.data = new __compactRuntime.ChargedState(context.callContext.currentQueryContext.state.state);
+    state_0.data = new __compactRuntime.ChargedState((context.callContext || context).currentQueryContext.state.state);
     return {
       currentContractState: state_0,
-      currentPrivateState: context.callContext.currentPrivateState,
-      currentZswapLocalState: context.callContext.currentZswapLocalState
+      currentPrivateState: (context.callContext || context).currentPrivateState,
+      currentZswapLocalState: (context.callContext || context).currentZswapLocalState
     }
   }
   _merkleTreePathRoot_0(path_0) {
@@ -480,9 +480,9 @@ export class Contract {
     return result_0;
   }
   _recipientSecret_0(context, partialProofData) {
-    const witnessContext_0 = __compactRuntime.createWitnessContext(ledger(context.callContext.currentQueryContext.state), context.callContext.currentPrivateState, context.callContext.currentQueryContext.address);
+    const witnessContext_0 = __compactRuntime.createWitnessContext(ledger((context.callContext || context).currentQueryContext.state), (context.callContext || context).currentPrivateState, (context.callContext || context).currentQueryContext.address);
     const [nextPrivateState_0, result_0] = this.witnesses.recipientSecret(witnessContext_0);
-    context.callContext.currentPrivateState = nextPrivateState_0;
+    (context.callContext || context).currentPrivateState = nextPrivateState_0;
     if (!(result_0.buffer instanceof ArrayBuffer && result_0.BYTES_PER_ELEMENT === 1 && result_0.length === 32)) {
       __compactRuntime.typeError('recipientSecret',
                                  'return value',
@@ -497,9 +497,9 @@ export class Contract {
     return result_0;
   }
   _shareAmount_0(context, partialProofData) {
-    const witnessContext_0 = __compactRuntime.createWitnessContext(ledger(context.callContext.currentQueryContext.state), context.callContext.currentPrivateState, context.callContext.currentQueryContext.address);
+    const witnessContext_0 = __compactRuntime.createWitnessContext(ledger((context.callContext || context).currentQueryContext.state), (context.callContext || context).currentPrivateState, (context.callContext || context).currentQueryContext.address);
     const [nextPrivateState_0, result_0] = this.witnesses.shareAmount(witnessContext_0);
-    context.callContext.currentPrivateState = nextPrivateState_0;
+    (context.callContext || context).currentPrivateState = nextPrivateState_0;
     if (!(typeof(result_0) === 'bigint' && result_0 >= 0n && result_0 <= 4294967295n)) {
       __compactRuntime.typeError('shareAmount',
                                  'return value',
@@ -514,9 +514,9 @@ export class Contract {
     return result_0;
   }
   _recipientPath_0(context, partialProofData) {
-    const witnessContext_0 = __compactRuntime.createWitnessContext(ledger(context.callContext.currentQueryContext.state), context.callContext.currentPrivateState, context.callContext.currentQueryContext.address);
+    const witnessContext_0 = __compactRuntime.createWitnessContext(ledger((context.callContext || context).currentQueryContext.state), (context.callContext || context).currentPrivateState, (context.callContext || context).currentQueryContext.address);
     const [nextPrivateState_0, result_0] = this.witnesses.recipientPath(witnessContext_0);
-    context.callContext.currentPrivateState = nextPrivateState_0;
+    (context.callContext || context).currentPrivateState = nextPrivateState_0;
     if (!(typeof(result_0) === 'object' && result_0.leaf.buffer instanceof ArrayBuffer && result_0.leaf.BYTES_PER_ELEMENT === 1 && result_0.leaf.length === 32 && Array.isArray(result_0.path) && result_0.path.length === 10 && result_0.path.every((t) => typeof(t) === 'object' && typeof(t.sibling) === 'object' && typeof(t.sibling.field) === 'bigint' && t.sibling.field >= 0 && t.sibling.field <= __compactRuntime.MAX_FIELD && typeof(t.goes_left) === 'boolean'))) {
       __compactRuntime.typeError('recipientPath',
                                  'return value',
