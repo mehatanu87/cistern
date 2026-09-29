@@ -16,11 +16,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: [
-      "@midnight-ntwrk/compact-runtime",
-      "@midnight-ntwrk/ledger-v8",
-      "@midnight-ntwrk/midnight-js-contracts",
-      "@midnight-ntwrk/midnight-js-indexer-public-data-provider",
-      "@midnight-ntwrk/midnight-js-fetch-zk-config-provider",
+      "@midnight-ntwrk/compact-runtime"
     ],
   },
   build: {
