@@ -142,11 +142,7 @@ async function main() {
         return basePrivateStateProvider.setSigningKey(sk, stringValue as any);
       },
       getSigningKey: async (sk: string) => {
-        const val = await basePrivateStateProvider.getSigningKey(sk);
-        if (typeof val === 'string') {
-            try { return JSON.parse(val); } catch { return { tag: 'schnorr', value: val }; }
-        }
-        return val;
+        return basePrivateStateProvider.getSigningKey(sk);
       },
       set: async (stateId: string, state: any) => {
         let patchedState = state;
@@ -167,16 +163,7 @@ async function main() {
         return basePrivateStateProvider.set(stateId, patchedState);
       },
       get: async (stateId: string) => {
-         const state = await basePrivateStateProvider.get(stateId);
-         if (state && state.keys) {
-             if (typeof state.keys.signing === 'string') {
-                 (state.keys.signing as any) = { tag: 'schnorr', value: state.keys.signing };
-             }
-             if (typeof state.keys.encryption === 'string') {
-                 (state.keys.encryption as any) = { tag: 'ed25519', value: state.keys.encryption };
-             }
-         }
-         return state;
+         return basePrivateStateProvider.get(stateId);
       }
     },
     publicDataProvider: indexerPublicDataProvider(envConfiguration.indexer, envConfiguration.indexerWS),
