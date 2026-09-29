@@ -125,13 +125,30 @@ async function main() {
   const zkConfigProvider = new NodeZkConfigProvider(config.zkConfigPath);
   const storagePassword = "TempPassword123!Secure";
   
+  const basePrivateStateProvider = levelPrivateStateProvider({
+    privateStateStoreName: config.privateStateStoreName,
+    signingKeyStoreName: `${config.privateStateStoreName}-signing-keys`,
+    privateStoragePasswordProvider: () => storagePassword,
+    accountId: seed,
+  });
+
   const providers = {
-    privateStateProvider: levelPrivateStateProvider({
-      privateStateStoreName: config.privateStateStoreName,
-      signingKeyStoreName: `${config.privateStateStoreName}-signing-keys`,
-      privateStoragePasswordProvider: () => storagePassword,
-      accountId: seed,
-    }),
+    privateStateProvider: {
+      ...basePrivateStateProvider,
+      setSigningKey: async (sk: string, value: any) => {
+        // compact-runtime 0.19.0 passes { tag: 'schnorr', value: 'hexstring' }
+        // levelPrivateStateProvider 4.1.1 expects a plain string
+        const stringValue = typeof value === 'string' ? value : (value.value || JSON.stringify(value));
+        return basePrivateStateProvider.setSigningKey(sk, stringValue as any);
+      },
+      getSigningKey: async (sk: string) => {
+        const val = await basePrivateStateProvider.getSigningKey(sk);
+        if (typeof val === 'string') {
+            try { return JSON.parse(val); } catch { return { tag: 'schnorr', value: val }; }
+        }
+        return val;
+      }
+    },
     publicDataProvider: indexerPublicDataProvider(envConfiguration.indexer, envConfiguration.indexerWS),
     zkConfigProvider,
     proofProvider: httpClientProofProvider(envConfiguration.proofServer, zkConfigProvider),
