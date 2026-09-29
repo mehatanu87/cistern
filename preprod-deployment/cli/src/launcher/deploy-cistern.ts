@@ -191,8 +191,24 @@ async function main() {
   try {
     const initialRoot = new Uint8Array(32); // 32 bytes of zeros
     
+    const patchedContract = {
+      ...CompiledcisternContractContract,
+      deploy: (...args: any[]) => {
+        const result = (CompiledcisternContractContract as any).deploy(...args);
+        if (result && result.privateState && result.privateState.keys) {
+            if (typeof result.privateState.keys.signing === 'object' && result.privateState.keys.signing) {
+                result.privateState.keys.signing = result.privateState.keys.signing.value;
+            }
+            if (typeof result.privateState.keys.encryption === 'object' && result.privateState.keys.encryption) {
+                result.privateState.keys.encryption = result.privateState.keys.encryption.value;
+            }
+        }
+        return result;
+      }
+    };
+
     const deployed = await deployContract(providers, {
-        compiledContract: CompiledcisternContractContract,
+        compiledContract: patchedContract as any,
         args: ["Pool 1", 3n, initialRoot]
     });
     
