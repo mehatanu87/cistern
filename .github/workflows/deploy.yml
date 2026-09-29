@@ -51,7 +51,9 @@ jobs:
 
       - name: Deploy Contract
         run: |
-          cd preprod-deployment/cli
+          cd preprod-deployment
+          node patch-sdk.js
+          cd cli
           npx tsx src/launcher/deploy-cistern.ts
         env:
           NODE_OPTIONS: "--max-old-space-size=8192 --expose-gc"
