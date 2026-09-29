@@ -147,6 +147,36 @@ async function main() {
             try { return JSON.parse(val); } catch { return { tag: 'schnorr', value: val }; }
         }
         return val;
+      },
+      set: async (stateId: string, state: any) => {
+        let patchedState = state;
+        if (state && state.keys && (typeof state.keys.signing === 'object' || typeof state.keys.encryption === 'object')) {
+           patchedState = {
+              ...state,
+              keys: {
+                  ...state.keys
+              }
+           };
+           if (typeof state.keys.signing === 'object' && state.keys.signing) {
+               patchedState.keys.signing = state.keys.signing.value;
+           }
+           if (typeof state.keys.encryption === 'object' && state.keys.encryption) {
+               patchedState.keys.encryption = state.keys.encryption.value;
+           }
+        }
+        return basePrivateStateProvider.set(stateId, patchedState);
+      },
+      get: async (stateId: string) => {
+         const state = await basePrivateStateProvider.get(stateId);
+         if (state && state.keys) {
+             if (typeof state.keys.signing === 'string') {
+                 (state.keys.signing as any) = { tag: 'schnorr', value: state.keys.signing };
+             }
+             if (typeof state.keys.encryption === 'string') {
+                 (state.keys.encryption as any) = { tag: 'ed25519', value: state.keys.encryption };
+             }
+         }
+         return state;
       }
     },
     publicDataProvider: indexerPublicDataProvider(envConfiguration.indexer, envConfiguration.indexerWS),
