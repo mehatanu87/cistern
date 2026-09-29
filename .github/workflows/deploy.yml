@@ -52,7 +52,7 @@ jobs:
       - name: Deploy Contract
         run: |
           cd preprod-deployment
-          node patch-sdk.js
+          node patch-sdk.cjs
           cd cli
           npx tsx src/launcher/deploy-cistern.ts
         env:
